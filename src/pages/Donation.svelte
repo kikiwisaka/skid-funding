@@ -1,11 +1,13 @@
 <script>
+    import router from 'page';
     import { onMount } from 'svelte';
     import Header from '../components/Header.svelte';
     import Footer from '../components/Footer.svelte';
-    import {charities} from '../data/charities';
+    import Loader from '../components/Loader.svelte';
 
     export let params;
     let charity, amount, name, email, agree = false;
+    // let data = getCharity(params.id)
 
     async function getCharity(id) {
         const res = await fetch(`https://charity-api-bwa.herokuapp.com/charities/${id}`);
@@ -16,11 +18,28 @@
         charity = await getCharity(params.id);
     });
 
-    function onClickHandler() {
-        console.log('button clicked');
+    async function submitHandler() {
+        charity.pledged = charity.pledged + parseInt(amount);
+        try {
+            const res = await fetch(`https://charity-api-bwa.herokuapp.com/charities/${params.id}`, {
+                method: 'PUT',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(charity)
+            });
+            console.log(res);
+            router.redirect('/success');
+        } catch (error) {
+            console.log(error);
+        }
     }
-    function submitHandler() {
-        console.log('form submitted');
+    function checkboxHandler() {
+        if(agree) {
+            agree = false;
+        } else {
+            agree = true;
+        }
     }
 </script>
 <style>
@@ -86,6 +105,7 @@
                                     type="text" 
                                     name="name" 
                                     id="xs-donate-name" 
+                                    required="true"
                                     class="form-control" 
                                     bind:value={amount} 
                                     placeholder="Your amount in Rupiah" />
@@ -98,6 +118,7 @@
                                 <input
                                   type="text"
                                   name="name"
+                                  required="true"
                                   id="xs-donate-name"
                                   class="form-control"
                                   bind:value={name}
@@ -111,6 +132,7 @@
                                 <input
                                   type="email"
                                   name="email"
+                                  required="true"
                                   id="xs-donate-email"
                                   bind:value={email}
                                   class="form-control"
@@ -121,6 +143,8 @@
                                   type="checkbox"
                                   name="agree"
                                   id="xs-donate-agree"
+                                  required="true"
+                                  on:click={checkboxHandler}
                                   />
                                 <label for="xs-donate-agree">
                                   I Agree
@@ -128,7 +152,7 @@
                                 </label>
                             </div>
                             <!-- .xs-input-group END -->
-                            <button type="submit" on:click|once={onClickHandler} class="btn btn-warning"><span class=
+                            <button type="submit" disabled={!agree} class="btn btn-warning"><span class=
                             "badge"><i class="fa fa-heart"></i></span> Donate
                             now</button>
                         </form><!-- .xs-donation-form #xs-donation-form END -->
