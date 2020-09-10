@@ -4,6 +4,8 @@
     export let charities;
 
     let isModalOpen = false;
+    console.log('list charity');
+    console.log(charities);
 
     function calculateFund(pledged, target) {
         return Math.round((1 / (target / pledged)) * 100);

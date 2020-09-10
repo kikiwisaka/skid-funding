@@ -7,18 +7,23 @@
 
     export let params;
     let charity, amount, name, email, agree = false;
-    // let data = getCharity(params.id)
+    let data = getCharity(params.id)
+    console.log('chhchc');
+    console.log(data);
+    console.log(charity);
 
     async function getCharity(id) {
         const res = await fetch(`https://charity-api-bwa.herokuapp.com/charities/${id}`);
         return await res.json();
     }
 
-    onMount(async function() {
-        charity = await getCharity(params.id);
-    });
+    // onMount(async function() {
+    //     charity = await getCharity(params.id);
+    // });
 
     async function submitHandler() {
+        // const newData = await getCharity(params.id);
+        // newData.pledged = newData.pledged + parseInt(amount);
         charity.pledged = charity.pledged + parseInt(amount);
         try {
             const res = await fetch(`https://charity-api-bwa.herokuapp.com/charities/${params.id}`, {
@@ -60,7 +65,9 @@
 </style>
 
 <Header />
-{#if charity}
+{#await data}
+<Loader />
+{:then charity}
 <section class="xs-banner-inner-section parallax-window" style=
     "background-image:url('/assets/images/backgrounds/kat-yukawa-K0E6E0a0R3A-unsplash.jpg')">
     <div class="xs-black-overlay"></div>
@@ -162,6 +169,6 @@
         </div><!-- .container end -->
     </section><!-- End donation form section -->
 </main>
-{/if}
+{/await}
 
 <Footer />
