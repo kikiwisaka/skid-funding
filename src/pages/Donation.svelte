@@ -8,35 +8,40 @@
     export let params;
     let charity, amount, name, email, agree = false;
     let data = getCharity(params.id)
-    console.log('chhchc');
-    console.log(data);
-    console.log(charity);
 
     async function getCharity(id) {
         const res = await fetch(`https://charity-api-bwa.herokuapp.com/charities/${id}`);
         return await res.json();
     }
 
-    // onMount(async function() {
-    //     charity = await getCharity(params.id);
-    // });
-
     async function submitHandler() {
-        // const newData = await getCharity(params.id);
-        // newData.pledged = newData.pledged + parseInt(amount);
-        charity.pledged = charity.pledged + parseInt(amount);
+        const newData = await getCharity(params.id);
+        newData.pledged = newData.pledged + parseInt(amount);
         try {
             const res = await fetch(`https://charity-api-bwa.herokuapp.com/charities/${params.id}`, {
                 method: 'PUT',
                 headers: {
                     'content-type': 'application/json'
                 },
-                body: JSON.stringify(charity)
+                body: JSON.stringify(newData)
             });
-            console.log(res);
-            router.redirect('/success');
-        } catch (error) {
-            console.log(error);
+            //payment process
+            const resMid = await fetch(`/.netlify/functions/payment`, {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: params.id,
+                    amount: parseInt(amount),
+                    name,
+                    email
+                }),
+            });
+            const dataMidtrans = await resMid.json();
+            window.location.href = dataMidtrans.url;
+        } catch (e) {
+            console.log(e);
         }
     }
     function checkboxHandler() {

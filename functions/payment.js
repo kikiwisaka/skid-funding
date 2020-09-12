@@ -15,7 +15,6 @@ exports.handler = function(event, context, callback) {
 
     const {id, name, amount, email} = JSON.parse(event.body);
     const names = name.split(' ');
-    console.log(names);
     let first_name, last_name;
     if(names & names.length > 1) {
         first_name = names[0],
@@ -41,9 +40,6 @@ exports.handler = function(event, context, callback) {
     snap.createTransaction(params)
         .then(function(transaction) {
             const {token, redirect_url} = transaction;
-            console.log(`Token: ${token}`);
-            console.log(`Redirect URL: ${redirect_url}`);
-
             callback(null, {
                 statusCode: 200,
                 headers,
