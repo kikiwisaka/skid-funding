@@ -1,4 +1,5 @@
 <script>
+    import { fade, fly, slide } from 'svelte/transition';
     import { onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
     import { charities } from '../stores/data.js';
     import Modal from './Modal.svelte';
@@ -59,7 +60,7 @@
         <div class="row">
             {#each $charities as charity }
                 {#if charity.pledged != null}
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-4 col-md-6" transition:fade>
                     {#if isModalOpen}
                     <Modal>
                         <div class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
@@ -107,9 +108,9 @@
                         <div class="xs-item-header">
                             <img src="{charity.thumbnail}" alt="">
                             <div class="xs-skill-bar">
-                                <div class="xs-skill-track">
-                                <p><span class="number-percentage-count number-percentage" data-value="90"
-                                    data-animation-duration="3500">0</span>%</p>
+                                <div class="xs-skill-track" style="width:{calculateFund(charity.pledged, charity.target)}%">
+                                <p in:fly="{{delay: 2000, x: -100}}" style="left: 100%"><span class="number-percentage-count number-percentage" data-value="90"
+                                    data-animation-duration="3500">{calculateFund(charity.pledged, charity.target)}</span>%</p>
                                 </div>
                             </div>
                         </div><!-- .xs-item-header END -->
