@@ -1,12 +1,16 @@
 <script>
     import { onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
+    import { charities } from '../stores/data.js';
     import Modal from './Modal.svelte';
-    export let charities;
+    import Loader from './Loader.svelte';
 
+    // let data = [];
+    // console.log('sdskds');
+    // charities.subscribe(function(value) {
+    //     data = value;
+    // })
     let isModalOpen = false;
-    console.log('list charity');
-    console.log(charities);
-
+    
     function calculateFund(pledged, target) {
         return Math.round((1 / (target / pledged)) * 100);
     }
@@ -53,7 +57,8 @@
             </div><!-- .xs-heading-title END -->
         </div><!-- .row end -->
         <div class="row">
-            {#each charities as charity }
+            {#each $charities as charity }
+                {#if charity.pledged != null}
                 <div class="col-lg-4 col-md-6">
                     {#if isModalOpen}
                     <Modal>
@@ -142,7 +147,10 @@
                         </div><!-- .xs-item-content END -->
                     </div><!-- .xs-popular-item END -->
                 </div>
-                {/each}
+                {/if}
+            {:else}
+                <Loader />
+            {/each}
             </div><!-- .row end -->
     </div><!-- .container end -->
 </section>
