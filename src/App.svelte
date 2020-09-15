@@ -9,6 +9,7 @@
 	import Success from './pages/Success.svelte';
 	import Failure from './pages/Failure.svelte';
 
+	export let ready;
 
 	router('/', () => ($page = Home));
 	router('/about', () => ($page = About));
@@ -25,4 +26,4 @@
 	router.start();
 </script>
 
-<svelte:component this={$page} />
+<svelte:component this={$page} {ready} />
